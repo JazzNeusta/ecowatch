@@ -1,0 +1,24 @@
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: #1C1D2E; /* Couleur de fond de la page */
+  color: #fff; /* Couleur du texte par défaut */
+}
+
+.App {
+  display: flex;
+  height: 100vh;
+}
+
+.card {
+  background-color: #2E2F45; /* Couleur des cartes */
+  border: none; /* Supprimer les bordures si nécessaire */
+}
+
+.MuiCardContent-root {
+  padding: 16px;
+}
+
+h4, h6 {
+  color: #fff; /* Couleur du texte */
+}
