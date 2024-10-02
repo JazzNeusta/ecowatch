@@ -10,7 +10,7 @@ const DashboardHeader = ({ temperatureAvg, humidityAvg, CO2Avg, TVOCAvg, soundAv
     {
       title: 'Temperature',
       value: `${temperatureAvg}°C`,  // Température dynamique
-      change: { value: '+1.2°C', color: '#4CAF50' },  // Vous pouvez rendre ce changement dynamique
+      change: { value: '+1.2°C', color: '#4CAF50' },  
       icon: Thermostat,
       color: '#FF0000',
     },

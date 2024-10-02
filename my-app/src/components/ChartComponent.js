@@ -1,28 +1,3 @@
-// // components/ChartComponent.js
-// import React from 'react';
-// import Highcharts from 'highcharts';
-// import HighchartsReact from 'highcharts-react-official';
-
-// const ChartComponent = ({ data, title, color }) => {
-//   const options = {
-//     chart: {
-//       type: 'line',
-//     },
-//     title: {
-//       text: title,
-//     },
-//     series: [{
-//       name: title,
-//       data: data,
-//       color: color
-//     }],
-//   };
-
-//   return <HighchartsReact highcharts={Highcharts} options={options} />;
-// };
-
-// export default ChartComponent;
-
 // components/ChartComponent.js
 import React from 'react';
 import Highcharts from 'highcharts';
@@ -46,7 +21,7 @@ const ChartComponent = ({ data, title, color }) => {
       title: {
         text: 'Values',
       },
-      min: 0,  // Ajuster les limites selon les données si nécessaire
+      min: 0, 
     },
     series: [{
       name: title,
