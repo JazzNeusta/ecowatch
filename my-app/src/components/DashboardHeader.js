@@ -1,10 +1,9 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import StatCard from './StatCard';
-import { Thermostat, Opacity, Air, AcUnit, VolumeUp } from '@mui/icons-material';
+import { Thermostat, Opacity, Air, AcUnit, VolumeUp, FilterDrama } from '@mui/icons-material'; // Nouveaux icônes
 
-const DashboardHeader = ({ temperatureAvg, humidityAvg, CO2Avg, TVOCAvg, soundAvg }) => {
-  // Données dynamiques à afficher dans les cartes de statistiques
+const DashboardHeader = ({ temperatureAvg, humidityAvg, CO2Avg, TVOCAvg, soundAvg, PM1_0Avg, PM2_5Avg, PM10Avg }) => {
   const data = [
     {
       title: 'Temperature',
@@ -41,20 +40,33 @@ const DashboardHeader = ({ temperatureAvg, humidityAvg, CO2Avg, TVOCAvg, soundAv
       icon: VolumeUp,
       color: '#DF5353',
     },
+    {
+      title: 'PM1.0',
+      value: `${PM1_0Avg} µg/m3`,
+      change: { value: '+1 µg/m3', color: '#8E44AD' },
+      icon: FilterDrama,
+      color: '#8E44AD',
+    },
+    {
+      title: 'PM2.5',
+      value: `${PM2_5Avg} µg/m3`,
+      change: { value: '+2 µg/m3', color: '#16A085' },
+      icon: FilterDrama,
+      color: '#16A085',
+    },
+    {
+      title: 'PM10',
+      value: `${PM10Avg} µg/m3`,
+      change: { value: '+3 µg/m3', color: '#F39C12' },
+      icon: FilterDrama,
+      color: '#F39C12',
+    },
   ];
 
   return (
     <Grid container spacing={3} style={{ marginBottom: 20 }}>
       {data.map((stat, index) => (
-        <Grid 
-          item 
-          xs={12} sm={6} md={3} 
-          key={index}
-          style={{
-            transition: 'transform 0.3s ease-in-out', 
-            '&:hover': { transform: 'scale(1.05)' } // Effet de survol
-          }}
-        >
+        <Grid item xs={12} md={3} key={index}>
           <StatCard
             title={stat.title}
             value={stat.value}

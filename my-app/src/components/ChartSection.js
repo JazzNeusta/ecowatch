@@ -1,10 +1,9 @@
-// components/ChartSection.js
 import React from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import { Grid } from '@mui/material';
 
-const ChartSection = ({ temperatureData, humidityData, CO2Data, TVOCData, soundData }) => {
+const ChartSection = ({ temperatureData, humidityData, CO2Data, TVOCData, soundData, PM1_0Data, PM2_5Data, PM10Data }) => {
   const options = (title, data, color, min, max) => ({
     chart: {
       type: 'spline',  // Utilisation de 'spline' pour lisser la courbe
@@ -53,8 +52,17 @@ const ChartSection = ({ temperatureData, humidityData, CO2Data, TVOCData, soundD
       <Grid item xs={6}>
         <HighchartsReact highcharts={Highcharts} options={options('TVOC over time', TVOCData, '#FFFF00', 0, 500)} />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={6}>
         <HighchartsReact highcharts={Highcharts} options={options('Sound over time', soundData, '#DF5353', 20, 100)} />
+      </Grid>
+      <Grid item xs={6}>
+        <HighchartsReact highcharts={Highcharts} options={options('PM1.0 over time', PM1_0Data, '#8E44AD', 0, 500)} />  {/* Nouveau graphique PM1.0 */}
+      </Grid>
+      <Grid item xs={6}>
+        <HighchartsReact highcharts={Highcharts} options={options('PM2.5 over time', PM2_5Data, '#16A085', 0, 500)} />  {/* Nouveau graphique PM2.5 */}
+      </Grid>
+      <Grid item xs={6}>
+        <HighchartsReact highcharts={Highcharts} options={options('PM10 over time', PM10Data, '#F39C12', 0, 500)} />  {/* Nouveau graphique PM10 */}
       </Grid>
     </Grid>
   );

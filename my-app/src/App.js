@@ -12,6 +12,9 @@ function App() {
   const [CO2Data, setCO2Data] = useState([]);
   const [TVOCData, setTVOCData] = useState([]);
   const [soundData, setSoundData] = useState([]);
+  const [PM1_0Data, setPM1_0Data] = useState([]);  // Nouvelle donnée PM1.0
+  const [PM2_5Data, setPM2_5Data] = useState([]);  // Nouvelle donnée PM2.5
+  const [PM10Data, setPM10Data] = useState([]);    // Nouvelle donnée PM10
   
   const [currentMenu, setCurrentMenu] = useState('dashboard');  // Par défaut le dashboard
 
@@ -26,28 +29,25 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://bucket-archi1.s3.eu-west-1.amazonaws.com/s3Key');
+        const response = await axios.get('https://cacses3bucket0301.s3.eu-west-3.amazonaws.com/mycacsekey');
         const data = response.data;
 
         // Logs pour vérifier les données récupérées
         console.log('Données récupérées:', data);
 
-        // Extraction du timestamp depuis dateTime
-        const timestamp = new Date(data.dateTime).getTime();  // Convertir en timestamp correct
+        // Correction de la conversion du timestamp
+        const [day, month, year, hours, minutes, seconds] = data.timestamp.split(/[- :]/);
+        const timestamp = new Date(`${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`).getTime();
 
         // Ajouter les nouvelles données aux anciennes pour chaque capteur
         setTemperatureData((prevData) => [...prevData, [timestamp, parseFloat(data.temperature)]]);
         setHumidityData((prevData) => [...prevData, [timestamp, parseFloat(data.humidity)]]);
         setCO2Data((prevData) => [...prevData, [timestamp, parseFloat(data.CO2)]]);
         setTVOCData((prevData) => [...prevData, [timestamp, parseFloat(data.TVOC)]]);
-        setSoundData((prevData) => [...prevData, [timestamp, parseFloat(data.dBA)]]);
-
-        // Logs pour vérifier les données envoyées aux graphiques
-        console.log('Temperature Data:', temperatureData);
-        console.log('Humidity Data:', humidityData);
-        console.log('CO2 Data:', CO2Data);
-        console.log('TVOC Data:', TVOCData);
-        console.log('Sound Data:', soundData);
+        setSoundData((prevData) => [...prevData, [timestamp, parseFloat(data.sound_level)]]);
+        setPM1_0Data((prevData) => [...prevData, [timestamp, parseFloat(data['PM1.0'])]]);  
+        setPM2_5Data((prevData) => [...prevData, [timestamp, parseFloat(data['PM2.5'])]]);  
+        setPM10Data((prevData) => [...prevData, [timestamp, parseFloat(data['PM10'])]]);    
 
       } catch (error) {
         console.error('Error fetching sensor data:', error);
@@ -56,9 +56,9 @@ function App() {
 
     // Récupérer les nouvelles données toutes les 5 secondes
     fetchData();  // Exécuter une première fois lors du montage
-    const interval = setInterval(fetchData, 5000);  // Puis toutes les 5 secondes
+    const interval = setInterval(fetchData, 10000);  // Puis toutes les 5 secondes
     return () => clearInterval(interval);  // Nettoyage lors du démontage
-  }, [temperatureData, humidityData, CO2Data, TVOCData, soundData]);
+  }, [temperatureData, humidityData, CO2Data, TVOCData, soundData, PM1_0Data, PM2_5Data, PM10Data]);
 
   const handleMenuClick = (menu) => {
     setCurrentMenu(menu);
@@ -76,6 +76,9 @@ function App() {
               CO2Avg={calculateAverage(CO2Data)}
               TVOCAvg={calculateAverage(TVOCData)}
               soundAvg={calculateAverage(soundData)}
+              PM1_0Avg={calculateAverage(PM1_0Data)}  
+              PM2_5Avg={calculateAverage(PM2_5Data)}  
+              PM10Avg={calculateAverage(PM10Data)}    
             />
             <ChartSection
               temperatureData={temperatureData}
@@ -83,6 +86,9 @@ function App() {
               CO2Data={CO2Data}
               TVOCData={TVOCData}
               soundData={soundData}
+              PM1_0Data={PM1_0Data}  
+              PM2_5Data={PM2_5Data}  
+              PM10Data={PM10Data}    
             />
           </>
         )}
