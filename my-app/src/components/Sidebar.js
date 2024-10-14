@@ -1,3 +1,4 @@
+//Une barre latérale pour la navigation dans le menu.
 import React from 'react';
 import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { Dashboard, CloudDownload, Settings } from '@mui/icons-material';

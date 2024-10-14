@@ -1,3 +1,4 @@
+// Affiche les moyennes des données 
 import React from 'react';
 import { Grid } from '@mui/material';
 import StatCard from './StatCard';

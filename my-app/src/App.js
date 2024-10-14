@@ -5,6 +5,7 @@ import ChartSection from './components/ChartSection';
 import SettingsCard from './components/SettingsCard';  // Import du composant de paramètres
 import './App.css';
 import axios from 'axios';  // Importer axios pour les requêtes HTTP
+import DownloadData from './components/DownloadData';
 
 function App() {
   const [temperatureData, setTemperatureData] = useState([]);
@@ -64,6 +65,17 @@ function App() {
     setCurrentMenu(menu);
   };
 
+  const data = {
+    temperatureData,
+    humidityData,
+    CO2Data,
+    TVOCData,
+    soundData,
+    PM1_0Data,
+    PM2_5Data,
+    PM10Data,
+  };
+
   return (
     <div style={{ display: 'flex', backgroundColor: '#1C1D2E' }}>
       <Sidebar onMenuClick={handleMenuClick} currentMenu={currentMenu} />
@@ -91,6 +103,10 @@ function App() {
               PM10Data={PM10Data}    
             />
           </>
+        )}
+
+        {currentMenu === 'download' && (
+          <DownloadData data={data} />
         )}
 
         {currentMenu === 'settings' && (

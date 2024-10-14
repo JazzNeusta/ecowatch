@@ -1,3 +1,4 @@
+// afficher les paramètres de l'application.
 import React from 'react';
 import { Card, CardContent, Typography, Divider, Box, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { Settings, Info, Code, Cloud, BarChart, GitHub, Storage, GridOn } from '@mui/icons-material';
