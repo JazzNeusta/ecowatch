@@ -1,7 +1,7 @@
 //Une barre latérale pour la navigation dans le menu.
 import React from 'react';
 import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import { Dashboard, CloudDownload, Settings } from '@mui/icons-material';
+import { Dashboard, CloudDownload, Settings, SmartToy} from '@mui/icons-material';
 import Logo from '../assets/LogoECOWATCH360.png';
 
 const Sidebar = ({ onMenuClick, currentMenu }) => {
@@ -45,6 +45,17 @@ const Sidebar = ({ onMenuClick, currentMenu }) => {
             <CloudDownload style={{ color: '#fff' }} />
           </ListItemIcon>
           <ListItemText primary="Download Data" style={{ color: '#fff' }} />
+        </ListItem>
+
+        <ListItem
+          button
+          onClick={() => onMenuClick('predicted data')}
+          style={{ ...getMenuStyle('predicted data'), ...getHoverStyle }}
+        >
+          <ListItemIcon>
+            <SmartToy style={{ color: '#fff' }} /> {/* Icône SmartToy pour représenter l'IA */}
+          </ListItemIcon>
+          <ListItemText primary="Predicted Data" style={{ color: '#fff' }} />
         </ListItem>
 
         <ListItem
