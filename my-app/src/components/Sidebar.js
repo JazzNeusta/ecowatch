@@ -1,22 +1,16 @@
-//Une barre latérale pour la navigation dans le menu.
 import React from 'react';
 import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import { Dashboard, CloudDownload, Settings, SmartToy} from '@mui/icons-material';
+import { Dashboard, CloudDownload, Settings, Notifications } from '@mui/icons-material';
+import Badge from '@mui/material/Badge';
 import Logo from '../assets/LogoECOWATCH360.png';
 
-const Sidebar = ({ onMenuClick, currentMenu }) => {
+const Sidebar = ({ onMenuClick, currentMenu, alertCount }) => {
   const getMenuStyle = (menu) => ({
-    backgroundColor: currentMenu === menu ? '#3E3F5E' : 'transparent',  // Changement de couleur si sélectionné
+    backgroundColor: currentMenu === menu ? '#3E3F5E' : 'transparent',
     color: '#fff',
     cursor: 'pointer',
-    transition: 'background-color 0.3s ease',  // Effet de transition lors de la sélection
+    transition: 'background-color 0.3s ease',
   });
-
-  const getHoverStyle = {
-    '&:hover': {
-      backgroundColor: '#484A6C',  // Couleur lors du survol
-    },
-  };
 
   return (
     <div style={{ width: 250, backgroundColor: '#2A2B3D', height: '100vh', padding: 20 }}>
@@ -25,44 +19,27 @@ const Sidebar = ({ onMenuClick, currentMenu }) => {
         <h2 style={{ color: '#fff' }}>ECOWATCH 360</h2>
       </div>
       <List>
-        <ListItem
-          button
-          onClick={() => onMenuClick('dashboard')}
-          style={{ ...getMenuStyle('dashboard'), ...getHoverStyle }}
-        >
+        <ListItem button onClick={() => onMenuClick('dashboard')} style={getMenuStyle('dashboard')}>
           <ListItemIcon>
             <Dashboard style={{ color: '#fff' }} />
           </ListItemIcon>
           <ListItemText primary="Dashboard" style={{ color: '#fff' }} />
         </ListItem>
-
-        <ListItem
-          button
-          onClick={() => onMenuClick('download')}
-          style={{ ...getMenuStyle('download'), ...getHoverStyle }}
-        >
+        <ListItem button onClick={() => onMenuClick('download')} style={getMenuStyle('download')}>
           <ListItemIcon>
             <CloudDownload style={{ color: '#fff' }} />
           </ListItemIcon>
           <ListItemText primary="Download Data" style={{ color: '#fff' }} />
         </ListItem>
-
-        <ListItem
-          button
-          onClick={() => onMenuClick('predicted data')}
-          style={{ ...getMenuStyle('predicted data'), ...getHoverStyle }}
-        >
+        <ListItem button onClick={() => onMenuClick('alerts')} style={getMenuStyle('alerts')}>
           <ListItemIcon>
-            <SmartToy style={{ color: '#fff' }} /> {/* Icône SmartToy pour représenter l'IA */}
+            <Badge badgeContent={alertCount} color="error">
+              <Notifications style={{ color: '#fff' }} />
+            </Badge>
           </ListItemIcon>
-          <ListItemText primary="Predicted Data" style={{ color: '#fff' }} />
+          <ListItemText primary="Alerts" style={{ color: '#fff' }} />
         </ListItem>
-
-        <ListItem
-          button
-          onClick={() => onMenuClick('settings')}
-          style={{ ...getMenuStyle('settings'), ...getHoverStyle }}
-        >
+        <ListItem button onClick={() => onMenuClick('settings')} style={getMenuStyle('settings')}>
           <ListItemIcon>
             <Settings style={{ color: '#fff' }} />
           </ListItemIcon>
@@ -74,4 +51,3 @@ const Sidebar = ({ onMenuClick, currentMenu }) => {
 };
 
 export default Sidebar;
-
