@@ -73,11 +73,33 @@ function App() {
       setAlertSent((prev) => ({ ...prev, sound: true }));
     }
   };
+    // Nouveaux états pour les dates de filtrage
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+  
+    // Fonction pour filtrer les données en fonction de la plage de dates
+    const filterDataByDateRange = (data) => {
+      if (!startDate || !endDate) return data; // Pas de filtrage si les dates ne sont pas définies
+      const startTimestamp = new Date(startDate).getTime();
+      const endTimestamp = new Date(endDate).getTime();
+  
+      return data.filter(([timestamp]) => timestamp >= startTimestamp && timestamp <= endTimestamp);
+    };
+  
+    // Données filtrées en fonction de la plage de dates
+    const filteredTemperatureData = filterDataByDateRange(temperatureData);
+    const filteredHumidityData = filterDataByDateRange(humidityData);
+    const filteredCO2Data = filterDataByDateRange(CO2Data);
+    const filteredTVOCData = filterDataByDateRange(TVOCData);
+    const filteredSoundData = filterDataByDateRange(soundData);
+    const filteredPM1_0Data = filterDataByDateRange(PM1_0Data);
+    const filteredPM2_5Data = filterDataByDateRange(PM2_5Data);
+    const filteredPM10Data = filterDataByDateRange(PM10Data);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://cacses3bucket0301.s3.eu-west-3.amazonaws.com/mycacsekey');
+        const response = await axios.get('https://bucket-archi1.s3.eu-west-1.amazonaws.com/s3Key');
         const data = response.data;
 
         const [day, month, year, hours, minutes, seconds] = data.timestamp.split(/[- :]/);
@@ -155,15 +177,32 @@ function App() {
               PM2_5Avg={calculateAverage(PM2_5Data)}
               PM10Avg={calculateAverage(PM10Data)}
             />
+             {/* Sélecteurs de dates pour le filtrage */}
+             <div style={{ marginBottom: 20 }}>
+              <label>
+                startDatet:
+                <input
+                  type="datetime-local"
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+              </label>
+              <label>
+                endDate:
+                <input
+                  type="datetime-local"
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </label>
+            </div>
             <ChartSection
-              temperatureData={temperatureData}
-              humidityData={humidityData}
-              CO2Data={CO2Data}
-              TVOCData={TVOCData}
-              soundData={soundData}
-              PM1_0Data={PM1_0Data}
-              PM2_5Data={PM2_5Data}
-              PM10Data={PM10Data}
+              temperatureData={filteredTemperatureData}
+              humidityData={filteredHumidityData}
+              CO2Data={filteredCO2Data}
+              TVOCData={filteredTVOCData}
+              soundData={filteredSoundData}
+              PM1_0Data={filteredPM1_0Data}
+              PM2_5Data={filteredPM2_5Data}
+              PM10Data={filteredPM10Data}
             />
           </>
         )}
