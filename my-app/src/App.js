@@ -156,7 +156,6 @@ function App() {
     PM2_5Data,
     PM10Data,
   };
-
   return (
     <div style={{ display: 'flex', backgroundColor: '#1C1D2E' }}>
       <Sidebar 
@@ -178,9 +177,9 @@ function App() {
               PM10Avg={calculateAverage(PM10Data)}
             />
              {/* Sélecteurs de dates pour le filtrage */}
-             <div style={{ marginBottom: 20 }}>
+             {/* <div style={{  marginTop: '20px', marginBottom: '20px', display: 'flex', gap: '10px' }}>
               <label>
-                startDatet:
+                startDate:
                 <input
                   type="datetime-local"
                   onChange={(e) => setStartDate(e.target.value)}
@@ -193,6 +192,44 @@ function App() {
                   onChange={(e) => setEndDate(e.target.value)}
                 />
               </label>
+            </div> */}
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
+              <div style={{ marginRight: 20 }}>
+                <label style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#A9A9A9' }}>
+                 startDate:
+                </label>
+                <input
+                  type="datetime-local"
+                  onChange={(e) => setStartDate(e.target.value)}
+                  style={{
+                    padding: '8px 12px',
+                    backgroundColor: '#2E2F45',
+                    border: '1px solid #444',
+                    borderRadius: 4,
+                    color: '#FFF',
+                    fontSize: 14,
+                    outline: 'none',
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#A9A9A9' }}>
+                endDate:
+                </label>
+                <input
+                  type="datetime-local"
+                  onChange={(e) => setEndDate(e.target.value)}
+                  style={{
+                    padding: '8px 12px',
+                    backgroundColor: '#2E2F45',
+                    border: '1px solid #444',
+                    borderRadius: 4,
+                    color: '#FFF',
+                    fontSize: 14,
+                    outline: 'none',
+                  }}
+                />
+              </div>
             </div>
             <ChartSection
               temperatureData={filteredTemperatureData}
