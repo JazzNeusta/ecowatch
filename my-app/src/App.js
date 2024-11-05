@@ -240,6 +240,8 @@ function App() {
               PM1_0Data={filteredPM1_0Data}
               PM2_5Data={filteredPM2_5Data}
               PM10Data={filteredPM10Data}
+              startDate={startDate}
+              endDate={endDate}
             />
           </>
         )}

@@ -14,7 +14,8 @@ const calculateMinMax = (data) => {
   return [min - margin, max + margin];
 };
 
-const ChartSection = ({ temperatureData, humidityData, CO2Data, TVOCData, soundData, PM1_0Data, PM2_5Data, PM10Data }) => {
+const ChartSection = ({ temperatureData, humidityData, CO2Data, TVOCData, soundData, PM1_0Data, PM2_5Data, PM10Data,
+  startDate, endDate }) => {
   
   const options = (title, data, color) => {
     const [min, max] = calculateMinMax(data); // Calcul dynamique de l'échelle
@@ -34,6 +35,8 @@ const ChartSection = ({ temperatureData, humidityData, CO2Data, TVOCData, soundD
           text: 'Time',
           style: { color: '#fff' },
         },
+        min: startDate ? new Date(startDate).getTime() : null,  // Plage minimum de l'axe X
+        max: endDate ? new Date(endDate).getTime() : null,       // Plage maximum de l'axe X
       },
       yAxis: {
         title: {
