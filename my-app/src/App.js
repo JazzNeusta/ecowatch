@@ -18,7 +18,7 @@ function App() {
   const [PM2_5Data, setPM2_5Data] = useState([]);
   const [PM10Data, setPM10Data] = useState([]);
 
-  const [currentMenu, setCurrentMenu] = useState('dashboard');
+  const [currentMenu, setCurrentMenu] = useState(localStorage.getItem('currentMenu') || 'dashboard');
   const [notifications, setNotifications] = useState([]);
   const [alertCount, setAlertCount] = useState(0);
   const [alertSent, setAlertSent] = useState({ temperature: false, CO2: false, TVOC: false, sound: false });
@@ -30,7 +30,7 @@ function App() {
   };
 
   const addNotification = (message) => {
-    const timestamp = new Date().toLocaleString(); // Ajouter la date et l'heure de la notification
+    const timestamp = new Date().toLocaleString();
     setNotifications((prev) => [...prev, { ...message, timestamp, read: false }]);
     setAlertCount((prev) => prev + 1);
   };
@@ -115,6 +115,7 @@ function App() {
         setPM10Data((prevData) => [...prevData, [timestamp, parseFloat(data['PM10'])]]);
 
         checkThresholds(data);
+        console.log('Données récupérées:', data);
       } catch (error) {
         console.error('Erreur lors de la récupération des données:', error);
       }
@@ -124,6 +125,10 @@ function App() {
     const interval = setInterval(fetchData, 2000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('currentMenu', currentMenu);
+  }, [currentMenu]);
 
   const handleMenuClick = (menu) => {
     setCurrentMenu(menu);
