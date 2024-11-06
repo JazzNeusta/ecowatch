@@ -93,6 +93,7 @@ function App() {
         setPM10Data((prevData) => [...prevData, [timestamp, parseFloat(data['PM10'])]]);
 
         checkThresholds(data);
+        console.log('Données récupérées:', data);
       } catch (error) {
         console.error('Erreur lors de la récupération des données:', error);
       }
