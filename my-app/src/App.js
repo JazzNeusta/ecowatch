@@ -20,7 +20,7 @@ function App() {
   const [newTemperatureData, setNewTemperatureData] = useState([]);
   const [newHumidityData, setNewHumidityData] = useState([]);
 
-  const [currentMenu, setCurrentMenu] = useState('dashboard');
+  const [currentMenu, setCurrentMenu] = useState(localStorage.getItem('currentMenu') || 'dashboard');
   const [notifications, setNotifications] = useState([]);
   const [alertCount, setAlertCount] = useState(0);
   const [alertSent, setAlertSent] = useState({ temperature: false, CO2: false, TVOC: false, sound: false });
@@ -112,6 +112,7 @@ function App() {
         setPM10Data((prevData) => [...prevData, [timestamp, parseFloat(data['PM10'])]]);
 
         checkThresholds(data);
+        console.log('Données récupérées:', data);
       } catch (error) {
         console.error('Erreur lors de la récupération des données:', error);
       }
@@ -141,6 +142,10 @@ function App() {
     const interval = setInterval(fetchAdditionalData, 2000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('currentMenu', currentMenu);
+  }, [currentMenu]);
 
   const handleMenuClick = (menu) => {
     setCurrentMenu(menu);
