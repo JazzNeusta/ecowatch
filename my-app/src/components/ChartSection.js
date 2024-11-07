@@ -14,7 +14,7 @@ const calculateMinMax = (data) => {
   return [min - margin, max + margin];
 };
 
-const ChartSection = ({ temperatureData, humidityData, CO2Data, TVOCData, soundData, PM1_0Data, PM2_5Data, PM10Data,
+const ChartSection = ({ temperatureData, humidityData,newTemperatureData, newHumidityData, CO2Data, TVOCData, soundData, PM1_0Data, PM2_5Data, PM10Data,
   startDate, endDate }) => {
   
   const options = (title, data, color) => {
@@ -72,6 +72,12 @@ const ChartSection = ({ temperatureData, humidityData, CO2Data, TVOCData, soundD
       </Grid>
       <Grid item xs={6}>
         <HighchartsReact highcharts={Highcharts} options={options('Humidity over time', humidityData, '#28B463')} />
+      </Grid>
+      <Grid item xs={6}>
+        <HighchartsReact highcharts={Highcharts} options={options('Temperature (Additional Bucket)', newTemperatureData, '#1F618D')} />
+      </Grid>
+      <Grid item xs={6}>
+        <HighchartsReact highcharts={Highcharts} options={options('Humidity (Additional Bucket)', newHumidityData, '#D68910')} />
       </Grid>
       <Grid item xs={6}>
         <HighchartsReact highcharts={Highcharts} options={options('CO2 over time', CO2Data, '#2ECC71')} />
