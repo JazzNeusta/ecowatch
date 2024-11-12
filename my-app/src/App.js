@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from './components/Sidebar';
 import DashboardHeader from './components/DashboardHeader';
 import ChartSection from './components/ChartSection';
@@ -17,11 +17,15 @@ function App() {
   const [PM1_0Data, setPM1_0Data] = useState([]);
   const [PM2_5Data, setPM2_5Data] = useState([]);
   const [PM10Data, setPM10Data] = useState([]);
+  const [newTemperatureData, setNewTemperatureData] = useState([]);
+  const [newHumidityData, setNewHumidityData] = useState([]);
 
   const [currentMenu, setCurrentMenu] = useState(localStorage.getItem('currentMenu') || 'dashboard');
   const [notifications, setNotifications] = useState([]);
   const [alertCount, setAlertCount] = useState(0);
   const [alertSent, setAlertSent] = useState({ temperature: false, CO2: false, TVOC: false, sound: false });
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const calculateAverage = (data) => {
     if (!data || !Array.isArray(data) || data.length === 0) return 'N/A';
@@ -35,7 +39,7 @@ function App() {
     setAlertCount((prev) => prev + 1);
   };
 
-  const checkThresholds = (data) => {
+  const checkThresholds = useCallback((data) => {
     if (data.temperature > 35 && !alertSent.temperature) {
       addNotification({
         title: 'Température élevée',
@@ -72,36 +76,29 @@ function App() {
       });
       setAlertSent((prev) => ({ ...prev, sound: true }));
     }
+  }, [alertSent]);
+
+  const filterDataByDateRange = (data) => {
+    if (!startDate || !endDate) return data;
+    const startTimestamp = new Date(startDate).getTime();
+    const endTimestamp = new Date(endDate).getTime();
+    return data.filter(([timestamp]) => timestamp >= startTimestamp && timestamp <= endTimestamp);
   };
-    // Nouveaux états pour les dates de filtrage
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-  
-    // Fonction pour filtrer les données en fonction de la plage de dates
-    const filterDataByDateRange = (data) => {
-      if (!startDate || !endDate) return data; // Pas de filtrage si les dates ne sont pas définies
-      const startTimestamp = new Date(startDate).getTime();
-      const endTimestamp = new Date(endDate).getTime();
-  
-      return data.filter(([timestamp]) => timestamp >= startTimestamp && timestamp <= endTimestamp);
-    };
-  
-    // Données filtrées en fonction de la plage de dates
-    const filteredTemperatureData = filterDataByDateRange(temperatureData);
-    const filteredHumidityData = filterDataByDateRange(humidityData);
-    const filteredCO2Data = filterDataByDateRange(CO2Data);
-    const filteredTVOCData = filterDataByDateRange(TVOCData);
-    const filteredSoundData = filterDataByDateRange(soundData);
-    const filteredPM1_0Data = filterDataByDateRange(PM1_0Data);
-    const filteredPM2_5Data = filterDataByDateRange(PM2_5Data);
-    const filteredPM10Data = filterDataByDateRange(PM10Data);
+
+  const filteredTemperatureData = filterDataByDateRange(temperatureData);
+  const filteredHumidityData = filterDataByDateRange(humidityData);
+  const filteredCO2Data = filterDataByDateRange(CO2Data);
+  const filteredTVOCData = filterDataByDateRange(TVOCData);
+  const filteredSoundData = filterDataByDateRange(soundData);
+  const filteredPM1_0Data = filterDataByDateRange(PM1_0Data);
+  const filteredPM2_5Data = filterDataByDateRange(PM2_5Data);
+  const filteredPM10Data = filterDataByDateRange(PM10Data);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://cacses3bucket0301.s3.eu-west-3.amazonaws.com/mycacsekey');   //le lien de la clé S3 correspondante au bucket "cacses3bucket0301"
+        const response = await axios.get('https://cacses3bucket0301.s3.eu-west-3.amazonaws.com/mycacsekey');
         const data = response.data;
-
         const [day, month, year, hours, minutes, seconds] = data.timestamp.split(/[- :]/);
         const timestamp = new Date(`${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`).getTime();
 
@@ -123,6 +120,26 @@ function App() {
 
     fetchData();
     const interval = setInterval(fetchData, 2000);
+    return () => clearInterval(interval);
+  }, [checkThresholds]);
+
+  useEffect(() => {
+    const fetchAdditionalData = async () => {
+      try {
+        const response = await axios.get('https://bucket-archi1.s3.eu-west-1.amazonaws.com/s3Key');
+        const data = response.data;
+        const [day, month, year, hours, minutes, seconds] = data.timestamp.split(/[- :]/);
+        const timestamp = new Date(`${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`).getTime();
+
+        setNewTemperatureData((prevData) => [...prevData, [timestamp, parseFloat(data.temperature)]]);
+        setNewHumidityData((prevData) => [...prevData, [timestamp, parseFloat(data.humidity)]]);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des données du nouveau bucket:', error);
+      }
+    };
+
+    fetchAdditionalData();
+    const interval = setInterval(fetchAdditionalData, 2000);
     return () => clearInterval(interval);
   }, []);
 
@@ -161,13 +178,10 @@ function App() {
     PM2_5Data,
     PM10Data,
   };
+
   return (
     <div style={{ display: 'flex', backgroundColor: '#1C1D2E' }}>
-      <Sidebar 
-        onMenuClick={handleMenuClick} 
-        currentMenu={currentMenu} 
-        alertCount={alertCount} 
-      />
+      <Sidebar onMenuClick={handleMenuClick} currentMenu={currentMenu} alertCount={alertCount} />
       <div style={{ flex: 1, padding: 20 }}>
         {currentMenu === 'dashboard' && (
           <>
@@ -181,28 +195,9 @@ function App() {
               PM2_5Avg={calculateAverage(PM2_5Data)}
               PM10Avg={calculateAverage(PM10Data)}
             />
-             {/* Sélecteurs de dates pour le filtrage */}
-             {/* <div style={{  marginTop: '20px', marginBottom: '20px', display: 'flex', gap: '10px' }}>
-              <label>
-                startDate:
-                <input
-                  type="datetime-local"
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-              </label>
-              <label>
-                endDate:
-                <input
-                  type="datetime-local"
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </label>
-            </div> */}
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
               <div style={{ marginRight: 20 }}>
-                <label style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#A9A9A9' }}>
-                 startDate:
-                </label>
+                <label style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#A9A9A9' }}>startDate:</label>
                 <input
                   type="datetime-local"
                   onChange={(e) => setStartDate(e.target.value)}
@@ -218,9 +213,7 @@ function App() {
                 />
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#A9A9A9' }}>
-                endDate:
-                </label>
+                <label style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#A9A9A9' }}>endDate:</label>
                 <input
                   type="datetime-local"
                   onChange={(e) => setEndDate(e.target.value)}
@@ -239,6 +232,8 @@ function App() {
             <ChartSection
               temperatureData={filteredTemperatureData}
               humidityData={filteredHumidityData}
+              newTemperatureData={newTemperatureData}
+              newHumidityData={newHumidityData}
               CO2Data={filteredCO2Data}
               TVOCData={filteredTVOCData}
               soundData={filteredSoundData}
@@ -250,21 +245,10 @@ function App() {
             />
           </>
         )}
-
-        {currentMenu === 'download' && (
-          <DownloadData data={data} />
-        )}
-
-        {currentMenu === 'settings' && (
-          <SettingsCard />
-        )}
-
+        {currentMenu === 'download' && <DownloadData data={data} />}
+        {currentMenu === 'settings' && <SettingsCard />}
         {currentMenu === 'alerts' && (
-          <AlertPage 
-            alerts={notifications}
-            clearNotifications={clearNotifications}
-            onAlertClick={handleAlertClick}
-          />
+          <AlertPage alerts={notifications} clearNotifications={clearNotifications} onAlertClick={handleAlertClick} />
         )}
       </div>
     </div>
