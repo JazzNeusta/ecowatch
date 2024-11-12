@@ -99,7 +99,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://bucket-archi1.s3.eu-west-1.amazonaws.com/s3Key');
+        const response = await axios.get('https://cacses3bucket0301.s3.eu-west-3.amazonaws.com/mycacsekey');   //le lien de la clé S3 correspondante au bucket "cacses3bucket0301"
         const data = response.data;
 
         const [day, month, year, hours, minutes, seconds] = data.timestamp.split(/[- :]/);
