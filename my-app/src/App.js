@@ -97,11 +97,13 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://cacses3bucket0301.s3.eu-west-3.amazonaws.com/mycacsekey');
+        const response = await axios.get(`https://cacses3bucket0301.s3.eu-west-3.amazonaws.com/mycacsekey?timestamp=${new Date().getTime()}`);
+        console.log('Raw response data:', response.data);
+    
         const data = response.data;
         const [day, month, year, hours, minutes, seconds] = data.timestamp.split(/[- :]/);
         const timestamp = new Date(`${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`).getTime();
-
+    
         setTemperatureData((prevData) => [...prevData, [timestamp, parseFloat(data.temperature)]]);
         setHumidityData((prevData) => [...prevData, [timestamp, parseFloat(data.humidity)]]);
         setCO2Data((prevData) => [...prevData, [timestamp, parseFloat(data.CO2)]]);
@@ -110,18 +112,17 @@ function App() {
         setPM1_0Data((prevData) => [...prevData, [timestamp, parseFloat(data['PM1.0'])]]);
         setPM2_5Data((prevData) => [...prevData, [timestamp, parseFloat(data['PM2.5'])]]);
         setPM10Data((prevData) => [...prevData, [timestamp, parseFloat(data['PM10'])]]);
-
+    
         checkThresholds(data);
-        console.log('Données récupérées:', data);
       } catch (error) {
         console.error('Erreur lors de la récupération des données:', error);
       }
     };
 
-    fetchData();
-    const interval = setInterval(fetchData, 2000);
-    return () => clearInterval(interval);
-  }, [checkThresholds]);
+    fetchData(); // Initial fetch
+  const interval = setInterval(fetchData, 2000); // Fetch every 2 seconds
+  return () => clearInterval(interval); // Cleanup interval on component unmount
+}, [checkThresholds]);
 
   useEffect(() => {
     const fetchAdditionalData = async () => {
