@@ -17,8 +17,7 @@ function App() {
   const [PM1_0Data, setPM1_0Data] = useState([]);
   const [PM2_5Data, setPM2_5Data] = useState([]);
   const [PM10Data, setPM10Data] = useState([]);
-  const [newTemperatureData, setNewTemperatureData] = useState([]);
-  const [newHumidityData, setNewHumidityData] = useState([]);
+  const [humidexData, setHumidexData] = useState([]);
 
   const [currentMenu, setCurrentMenu] = useState(localStorage.getItem('currentMenu') || 'dashboard');
   const [notifications, setNotifications] = useState([]);
@@ -32,6 +31,25 @@ function App() {
     const total = data.reduce((sum, value) => sum + value[1], 0);
     return (total / data.length).toFixed(2);
   };
+
+  useEffect(() => {
+    const calculateHumidex = (temperature, humidity) => {
+      const e = (humidity / 100) * 6.112 * Math.exp((17.67 * temperature) / (temperature + 243.5));
+      return temperature + 0.5555 * (e - 10);
+    };
+
+    if (temperatureData.length && humidityData.length) {
+      const newHumidexData = temperatureData.map(([timestamp, temp], index) => {
+        const [, humidity] = humidityData[index] || [];
+        if (humidity !== undefined) {
+          const humidex = calculateHumidex(temp, humidity);
+          return [timestamp, humidex];
+        }
+        return null;
+      }).filter(Boolean);
+      setHumidexData(newHumidexData);
+    }
+  }, [temperatureData, humidityData]);
 
   const addNotification = (message) => {
     const timestamp = new Date().toLocaleString();
@@ -125,26 +143,6 @@ function App() {
 }, [checkThresholds]);
 
   useEffect(() => {
-    const fetchAdditionalData = async () => {
-      try {
-        const response = await axios.get('https://bucket-archi1.s3.eu-west-1.amazonaws.com/s3Key');
-        const data = response.data;
-        const [day, month, year, hours, minutes, seconds] = data.timestamp.split(/[- :]/);
-        const timestamp = new Date(`${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`).getTime();
-
-        setNewTemperatureData((prevData) => [...prevData, [timestamp, parseFloat(data.temperature)]]);
-        setNewHumidityData((prevData) => [...prevData, [timestamp, parseFloat(data.humidity)]]);
-      } catch (error) {
-        console.error('Erreur lors de la récupération des données du nouveau bucket:', error);
-      }
-    };
-
-    fetchAdditionalData();
-    const interval = setInterval(fetchAdditionalData, 2000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
     localStorage.setItem('currentMenu', currentMenu);
   }, [currentMenu]);
 
@@ -233,8 +231,7 @@ function App() {
             <ChartSection
               temperatureData={filteredTemperatureData}
               humidityData={filteredHumidityData}
-              newTemperatureData={newTemperatureData}
-              newHumidityData={newHumidityData}
+              humidexData={humidexData}
               CO2Data={filteredCO2Data}
               TVOCData={filteredTVOCData}
               soundData={filteredSoundData}
