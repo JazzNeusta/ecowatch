@@ -14,56 +14,69 @@ const calculateMinMax = (data) => {
   return [min - margin, max + margin];
 };
 
-const ChartSection = ({ temperatureData, humidityData,newTemperatureData, newHumidityData, CO2Data, TVOCData, soundData, PM1_0Data, PM2_5Data, PM10Data,
+const ChartSection = ({ temperatureData, humidityData, humidexdata, CO2Data, TVOCData, soundData, PM1_0Data, PM2_5Data, PM10Data,
   startDate, endDate }) => {
   
-  const options = (title, data, color) => {
-    const [min, max] = calculateMinMax(data); // Calcul dynamique de l'échelle
-    return {
-      chart: {
-        type: 'spline',  // Courbe lissée
-        backgroundColor: '#2E2F45',
-        height: 300, // Hauteur ajustée
-      },
-      title: {
-        text: title,
-        style: { color: '#fff' },
-      },
-      xAxis: {
-        type: 'datetime',
+    const options = (title, data, color) => {
+      return {
+        chart: {
+          type: 'spline', // Smoothed line chart
+          backgroundColor: '#2E2F45',
+          height: 300,
+        },
         title: {
-          text: 'Time',
+          text: title,
           style: { color: '#fff' },
         },
-        min: startDate ? new Date(startDate).getTime() : null,  // Plage minimum de l'axe X
-        max: endDate ? new Date(endDate).getTime() : null,       // Plage maximum de l'axe X
-      },
-      yAxis: {
-        title: {
-          text: 'Values',
-          style: { color: '#fff' },
+        xAxis: {
+          type: 'datetime',
+          title: {
+            text: 'Time (Minutes)',
+            style: { color: '#fff' },
+          },
+          min: 0, // Start at 0
+          max: 10 * 60 * 1000, // 10 minutes in milliseconds
+          labels: {
+            formatter: function () {
+              return `${Math.round(this.value / 60000)} min`; // Convert milliseconds to minutes
+            },
+            style: { color: '#fff' },
+          },
+          gridLineWidth: 1, // Add vertical grid lines
         },
-        min: min,
-        max: max,
-      },
-      plotOptions: {
-        series: {
-          marker: {
-            enabled: true,
-            radius: 3, // Taille des marqueurs
+        yAxis: {
+          title: {
+            text: 'Values',
+            style: { color: '#fff' },
+          },
+          min: 0, // Set minimum to 0
+          max: 100, // Set maximum to 100
+          tickInterval: 10, // Optional: Add ticks every 10 units
+          gridLineWidth: 1, // Add horizontal grid lines
+          labels: {
+            style: { color: '#fff' },
           },
         },
-      },
-      series: [{
-        data: data,
-        color: color,
-        lineWidth: 2,
-        marker: {
-          radius: 3,  // Taille des points
+        plotOptions: {
+          series: {
+            marker: {
+              enabled: true,
+              radius: 3, // Size of data points
+            },
+          },
         },
-      }],
+        series: [
+          {
+            data: data,
+            color: color,
+            lineWidth: 2,
+            marker: {
+              radius: 3, // Size of markers
+            },
+          },
+        ],
+      };
     };
-  };
 
   return (
     <Grid container spacing={3} style={{ marginTop: 20 }}>
@@ -74,10 +87,7 @@ const ChartSection = ({ temperatureData, humidityData,newTemperatureData, newHum
         <HighchartsReact highcharts={Highcharts} options={options('Humidity over time', humidityData, '#28B463')} />
       </Grid>
       <Grid item xs={6}>
-        <HighchartsReact highcharts={Highcharts} options={options('Temperature (Additional Bucket)', newTemperatureData, '#1F618D')} />
-      </Grid>
-      <Grid item xs={6}>
-        <HighchartsReact highcharts={Highcharts} options={options('Humidity (Additional Bucket)', newHumidityData, '#D68910')} />
+      <HighchartsReact highcharts={Highcharts} options={options('Humidex over time', humidexdata, '#E5A00C')} />
       </Grid>
       <Grid item xs={6}>
         <HighchartsReact highcharts={Highcharts} options={options('CO2 over time', CO2Data, '#2ECC71')} />

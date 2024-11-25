@@ -29,7 +29,7 @@ const DashboardHeader = ({ temperatureAvg, humidityAvg, CO2Avg, TVOCAvg, soundAv
     },
     {
       title: 'TVOC',
-      value: `${TVOCAvg} mg/m3`,
+      value: `${TVOCAvg} ppb`,
       change: { value: '0%', color: '#FFC107' },
       icon: AcUnit,
       color: '#FFFF00',
