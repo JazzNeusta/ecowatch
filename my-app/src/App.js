@@ -115,7 +115,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`https://cacses3bucket0301.s3.eu-west-3.amazonaws.com/mycacsekey?timestamp=${new Date().getTime()}`);
+        const response = await axios.get(`https://bucket-archi1.s3.eu-west-1.amazonaws.com/s3Key?timestamp=${new Date().getTime()}`);
         console.log('Raw response data:', response.data);
     
         const data = response.data;
@@ -231,7 +231,7 @@ function App() {
             <ChartSection
               temperatureData={filteredTemperatureData}
               humidityData={filteredHumidityData}
-              humidexData={humidexData}
+              humidexData={humidexData}    //Pensons à l'enlever et le mettre dans un graphiqe à part
               CO2Data={filteredCO2Data}
               TVOCData={filteredTVOCData}
               soundData={filteredSoundData}
@@ -254,3 +254,4 @@ function App() {
 }
 
 export default App;
+

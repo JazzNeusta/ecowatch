@@ -2,6 +2,9 @@
   "dependencies": {
     "@date-io/date-fns": "^3.0.0",
     "@mui/lab": "^6.0.0-beta.10",
-    "@mui/x-date-pickers": "^7.18.0"
+    "@mui/x-date-pickers": "^7.18.0",
+    "chart.js": "^4.4.6",
+    "lucide-react": "^0.461.0",
+    "react-chartjs-2": "^5.2.0"
   }
 }
