@@ -25,6 +25,12 @@ function App() {
   const [alertSent, setAlertSent] = useState({ temperature: false, CO2: false, TVOC: false, sound: false });
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [selectedBucket, setSelectedBucket] = useState('device1');
+
+  const buckets = {
+    device1: 'https://bucket-archi1.s3.eu-west-1.amazonaws.com/s3Key',
+    device2: 'https://cacses3bucket0301.s3.eu-west-3.amazonaws.com/mycacsekey',
+  };
 
   const calculateAverage = (data) => {
     if (!data || !Array.isArray(data) || data.length === 0) return 'N/A';
@@ -39,15 +45,29 @@ function App() {
     };
 
     if (temperatureData.length && humidityData.length) {
-      const newHumidexData = temperatureData.map(([timestamp, temp], index) => {
-        const [, humidity] = humidityData[index] || [];
-        if (humidity !== undefined) {
+      // Assurez-vous que les données sont triées par timestamp pour éviter les incohérences
+      const sortedTemperatureData = [...temperatureData].sort(([a], [b]) => a - b);
+      const sortedHumidityData = [...humidityData].sort(([a], [b]) => a - b);
+
+      const newHumidexData = sortedTemperatureData.map(([timestamp, temp]) => {
+        // Trouver la valeur d'humidité correspondant au même timestamp
+        const matchingHumidityEntry = sortedHumidityData.find(([humidityTimestamp]) => humidityTimestamp === timestamp);
+        if (matchingHumidityEntry) {
+          const [, humidity] = matchingHumidityEntry;
           const humidex = calculateHumidex(temp, humidity);
           return [timestamp, humidex];
         }
         return null;
-      }).filter(Boolean);
+      }).filter(Boolean); // Filtrer toutes les entrées non valides ou mal assorties
+
+      if (newHumidexData.length === 0) {
+        console.warn('Humidex data is empty. Ensure temperatureData and humidityData are synchronized.');
+      }
+
       setHumidexData(newHumidexData);
+    } else {
+      console.warn('Temperature or Humidity data is missing.');
+      setHumidexData([]);
     }
   }, [temperatureData, humidityData]);
 
@@ -115,13 +135,14 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`https://bucket-archi1.s3.eu-west-1.amazonaws.com/s3Key?timestamp=${new Date().getTime()}`);
-        console.log('Raw response data:', response.data);
-    
+        const bucketUrl = buckets[selectedBucket];
+      const response = await axios.get(`${bucketUrl}?nocache=${new Date().getTime()}`);
+      console.log('Raw response data:', response.data);
+
         const data = response.data;
         const [day, month, year, hours, minutes, seconds] = data.timestamp.split(/[- :]/);
         const timestamp = new Date(`${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`).getTime();
-    
+
         setTemperatureData((prevData) => [...prevData, [timestamp, parseFloat(data.temperature)]]);
         setHumidityData((prevData) => [...prevData, [timestamp, parseFloat(data.humidity)]]);
         setCO2Data((prevData) => [...prevData, [timestamp, parseFloat(data.CO2)]]);
@@ -130,7 +151,7 @@ function App() {
         setPM1_0Data((prevData) => [...prevData, [timestamp, parseFloat(data['PM1.0'])]]);
         setPM2_5Data((prevData) => [...prevData, [timestamp, parseFloat(data['PM2.5'])]]);
         setPM10Data((prevData) => [...prevData, [timestamp, parseFloat(data['PM10'])]]);
-    
+
         checkThresholds(data);
       } catch (error) {
         console.error('Erreur lors de la récupération des données:', error);
@@ -138,9 +159,9 @@ function App() {
     };
 
     fetchData(); // Initial fetch
-  const interval = setInterval(fetchData, 2000); // Fetch every 2 seconds
-  return () => clearInterval(interval); // Cleanup interval on component unmount
-}, [checkThresholds]);
+    const interval = setInterval(fetchData, 2000); // Fetch every 2 seconds
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, [selectedBucket, checkThresholds]);
 
   useEffect(() => {
     localStorage.setItem('currentMenu', currentMenu);
@@ -226,6 +247,25 @@ function App() {
                     outline: 'none',
                   }}
                 />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#A9A9A9' }}>Sélectionnez le boitié</label>
+                <select
+                  value={selectedBucket}
+                  onChange={(e) => setSelectedBucket(e.target.value)}
+                  style={{
+                    padding: '8px 12px',
+                    backgroundColor: '#2E2F45',
+                    border: '1px solid #444',
+                    borderRadius: 4,
+                    color: '#FFF',
+                    fontSize: 14,
+                    outline: 'none',
+                  }}
+                >
+                  <option value="device1">outdoor 1</option>
+                  <option value="device2">indoor 1</option>
+                </select>
               </div>
             </div>
             <ChartSection
