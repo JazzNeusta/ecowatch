@@ -43,7 +43,7 @@ const Sidebar = ({ onMenuClick, currentMenu, alertCount }) => {
           <ListItemIcon>
             <Settings style={{ color: '#fff' }} />
           </ListItemIcon>
-          <ListItemText primary="Settings" style={{ color: '#fff' }} />
+          <ListItemText primary="Informations" style={{ color: '#fff' }} />
         </ListItem>
       </List>
     </div>

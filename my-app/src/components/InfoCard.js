@@ -10,7 +10,7 @@ const SettingsCard = () => {
         <Box style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
           <Settings style={{ fontSize: 40, marginRight: 10, color: '#FF9800' }} />
           <Typography variant="h5" style={{ fontWeight: 'bold', color: '#FF9800' }}>
-            Application Settings
+            Informations about the application
           </Typography>
         </Box>
         

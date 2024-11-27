@@ -50,7 +50,7 @@ const AlertPage = ({ alerts = [], onClearAlerts, onAlertClick }) => {
       )}
 
       <Box style={{ marginTop: '20px' }}>
-        <Button 
+        {/* <Button 
           onClick={onClearAlerts} 
           variant="contained" 
           style={{ 
@@ -65,7 +65,30 @@ const AlertPage = ({ alerts = [], onClearAlerts, onAlertClick }) => {
           onMouseOut={(e) => e.target.style.backgroundColor = '#FF5733'}
         >
           Effacer les alertes
+        </Button> */}
+        <Button 
+          onClick={alerts.length > 0 ? onClearAlerts : null} // Ne déclenche l'action que s'il y a des alertes
+          variant="contained" 
+          style={{ 
+            backgroundColor: alerts.length > 0 ? '#FF5733' : '#555', // Couleur grisée si désactivé
+            color: alerts.length > 0 ? '#fff' : '#888', // Texte plus clair quand désactivé
+            fontWeight: 'bold', 
+            borderRadius: '10px',
+            padding: '10px 20px',
+            transition: 'background-color 0.3s ease-in-out',
+            cursor: alerts.length > 0 ? 'pointer' : 'not-allowed', // Curseur "non autorisé" si désactivé
+          }}
+          disabled={alerts.length === 0} // Désactiver le bouton quand il n'y a pas d'alertes
+          onMouseOver={(e) => {
+            if (alerts.length > 0) e.target.style.backgroundColor = '#FF4500';
+          }}
+          onMouseOut={(e) => {
+            if (alerts.length > 0) e.target.style.backgroundColor = '#FF5733';
+          }}
+        >
+          Effacer les alertes
         </Button>
+
       </Box>
     </div>
   );

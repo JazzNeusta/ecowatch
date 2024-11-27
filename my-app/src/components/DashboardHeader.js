@@ -39,7 +39,7 @@ const DashboardHeader = ({ temperatureAvg, humidityAvg, CO2Avg, TVOCAvg, soundAv
       value: `${soundAvg} dB`,
       change: { value: '+5 dB', color: '#F44336' },
       icon: VolumeUp,
-      color: '#DF5353',
+      color: '#00000F',
     },
     {
       title: 'PM1.0',

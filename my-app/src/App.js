@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from './components/Sidebar';
 import DashboardHeader from './components/DashboardHeader';
 import ChartSection from './components/ChartSection';
-import SettingsCard from './components/SettingsCard';
+import SettingsCard from './components/InfoCard';
 import './App.css';
 import axios from 'axios';
 import DownloadData from './components/DownloadData';
