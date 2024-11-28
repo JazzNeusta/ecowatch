@@ -7,6 +7,7 @@ import './App.css';
 import axios from 'axios';
 import DownloadData from './components/DownloadData';
 import AlertPage from './components/AlertPage';
+import ChartSectionNormalizedData from './components/ChartSectionNormalizedData';
 
 function App() {
   const [temperatureData, setTemperatureData] = useState([]);
@@ -281,6 +282,16 @@ function App() {
               startDate={startDate}
               endDate={endDate}
             />
+            <ChartSectionNormalizedData  //Ajout du graphique normalisé
+              temperatureData={temperatureData}
+              humidityData={humidityData}
+              CO2Data={CO2Data}
+              TVOCData={TVOCData}
+              soundData={soundData}
+              PM1_0Data={PM1_0Data}
+              PM2_5Data={PM2_5Data}
+              PM10Data={PM10Data}
+            />;
           </>
         )}
         {currentMenu === 'download' && <DownloadData data={data} />}
