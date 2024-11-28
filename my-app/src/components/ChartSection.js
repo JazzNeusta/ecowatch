@@ -45,7 +45,7 @@ const ChartSection = ({
   const chartRefCombined = useRef(null);
   const chartRefHumidex = useRef(null);
 
-  // Fonction pour déterminer les min et max de l'axe X (5 minutes avant et après les données)
+  // Fonction pour déterminer les min et max de l'axe X (2 minutes avant et après les données)
   const calculateXAxisExtremes = (data) => {
     if (!data || data.length === 0) return [null, null];
     const timestamps = data.map((d) => d[0]);
@@ -76,7 +76,7 @@ const ChartSection = ({
 
   return (
     <Grid container spacing={3} style={{ marginTop: 20 }}>
-      {/* Graphique combiné avec checkboxes */}
+      {/* Graphique combiné et checkboxes alignés côte à côte */}
       <Grid item xs={10}>
         <HighchartsReact
           highcharts={Highcharts}
@@ -137,7 +137,7 @@ const ChartSection = ({
               visibleSeries.humidity && { name: 'Humidity', data: filterDataPerMinute(humidityData), color: '#00FF00' },
               visibleSeries.CO2 && { name: 'CO2', data: filterDataPerMinute(CO2Data), color: '#0000FF' },
               visibleSeries.TVOC && { name: 'TVOC', data: filterDataPerMinute(TVOCData), color: '#FFFF00' },
-              visibleSeries.sound && { name: 'Sound', data: filterDataPerMinute(soundData), color: '#00000F' },
+              visibleSeries.sound && { name: 'Sound', data: filterDataPerMinute(soundData), color: '#f033ff' },
               visibleSeries.PM1_0 && { name: 'PM1.0', data: filterDataPerMinute(PM1_0Data), color: '#8E44AD' },
               visibleSeries.PM2_5 && { name: 'PM2.5', data: filterDataPerMinute(PM2_5Data), color: '#16A085' },
               visibleSeries.PM10 && { name: 'PM10', data: filterDataPerMinute(PM10Data), color: '#F39C12' },
@@ -151,6 +151,37 @@ const ChartSection = ({
         />
       </Grid>
 
+      {/* Checkboxes pour le graphique combiné à droite du graphique */}
+      <Grid item xs={2}>
+        <FormGroup
+          style={{
+            padding: '20px',
+            backgroundColor: '#2E2F45',
+            borderRadius: '8px',
+          }}
+        >
+          {Object.keys(visibleSeries).map((key) => (
+            <FormControlLabel
+              key={key}
+              control={
+                <Checkbox
+                  checked={visibleSeries[key]}
+                  onChange={handleCheckboxChange}
+                  name={key}
+                  style={{ color: '#fff' }}
+                />
+              }
+              label={key.charAt(0).toUpperCase() + key.slice(1)}
+              style={{
+                color: '#fff',
+                marginBottom: '8px',
+                width: 'auto',
+              }}
+            />
+          ))}
+        </FormGroup>
+      </Grid>
+
       {/* Graphique de l'humidex */}
       <Grid item xs={10} style={{ marginTop: '20px' }}>
         <HighchartsReact
@@ -160,7 +191,7 @@ const ChartSection = ({
               type: 'spline',
               backgroundColor: '#2E2F45',
               height: 400,
-              zoomType: 'x', // Permet de zoomer sur l'axe des x
+              zoomType: 'x', // Ajout pour permettre de zoomer sur l'axe des x
               resetZoomButton: {
                 position: {
                   align: 'right', // Positionner à droite
@@ -235,38 +266,6 @@ const ChartSection = ({
           }}
           ref={chartRefHumidex}
         />
-      </Grid>
-
-      {/* Checkboxes pour le graphique combiné */}
-      <Grid item xs={2}>
-        <FormGroup
-          style={{
-            marginLeft: '50px',
-            padding: '30px',
-            backgroundColor: '#2E2F45',
-            borderRadius: '8px',
-          }}
-        >
-          {Object.keys(visibleSeries).map((key) => (
-            <FormControlLabel
-              key={key}
-              control={
-                <Checkbox
-                  checked={visibleSeries[key]}
-                  onChange={handleCheckboxChange}
-                  name={key}
-                  style={{ color: '#fff' }}
-                />
-              }
-              label={key.charAt(0).toUpperCase() + key.slice(1)}
-              style={{
-                color: '#fff',
-                marginBottom: '8px',
-                width: 'auto',
-              }}
-            />
-          ))}
-        </FormGroup>
       </Grid>
     </Grid>
   );
