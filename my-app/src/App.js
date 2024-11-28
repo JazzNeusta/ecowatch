@@ -229,7 +229,7 @@ function App() {
               PM10Avg={calculateAverage(PM10Data)}
             />
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
-              <div style={{ marginRight: 20 }}>
+              {/* <div style={{ marginRight: 20 }}>
                 <label style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#A9A9A9' }}>startDate:</label>
                 <input
                   type="datetime-local"
@@ -244,8 +244,8 @@ function App() {
                     outline: 'none',
                   }}
                 />
-              </div>
-              <div>
+              </div> */}
+              {/* <div>
                 <label style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#A9A9A9' }}>endDate:</label>
                 <input
                   type="datetime-local"
@@ -260,7 +260,7 @@ function App() {
                     outline: 'none',
                   }}
                 />
-              </div>
+              </div> */}
               <div>
                 <label style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#A9A9A9' }}>Sélectionnez le dispositif</label>
                 <select
