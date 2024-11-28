@@ -26,12 +26,14 @@ function App() {
   const [alertSent, setAlertSent] = useState({ temperature: false, CO2: false, TVOC: false, sound: false });
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [selectedBucket, setSelectedBucket] = useState('device1');
+  const [selectedDevice, setSelectedDevice] = useState('outdoor1');
 
-  const buckets = {
-    device1: 'https://bucket-archi1.s3.eu-west-1.amazonaws.com/s3Key',
-    device2: 'https://cacses3bucket0301.s3.eu-west-3.amazonaws.com/mycacsekey',
+  const deviceIDs = {
+    outdoor1: '20240313101500',
+    indoor1: '20240920083000',
   };
+
+  const bucketUrl = 'https://cacses3bucket0301.s3.eu-west-3.amazonaws.com/mycacsekey';
 
   const calculateAverage = (data) => {
     if (!data || !Array.isArray(data) || data.length === 0) return 'N/A';
@@ -46,12 +48,10 @@ function App() {
     };
 
     if (temperatureData.length && humidityData.length) {
-      // Assurez-vous que les données sont triées par timestamp pour éviter les incohérences
       const sortedTemperatureData = [...temperatureData].sort(([a], [b]) => a - b);
       const sortedHumidityData = [...humidityData].sort(([a], [b]) => a - b);
 
       const newHumidexData = sortedTemperatureData.map(([timestamp, temp]) => {
-        // Trouver la valeur d'humidité correspondant au même timestamp
         const matchingHumidityEntry = sortedHumidityData.find(([humidityTimestamp]) => humidityTimestamp === timestamp);
         if (matchingHumidityEntry) {
           const [, humidity] = matchingHumidityEntry;
@@ -59,7 +59,7 @@ function App() {
           return [timestamp, humidex];
         }
         return null;
-      }).filter(Boolean); // Filtrer toutes les entrées non valides ou mal assorties
+      }).filter(Boolean);
 
       if (newHumidexData.length === 0) {
         console.warn('Humidex data is empty. Ensure temperatureData and humidityData are synchronized.');
@@ -134,13 +134,26 @@ function App() {
   const filteredPM10Data = filterDataByDateRange(PM10Data);
 
   useEffect(() => {
+    setTemperatureData([]);
+  setHumidityData([]);
+  setCO2Data([]);
+  setTVOCData([]);
+  setSoundData([]);
+  setPM1_0Data([]);
+  setPM2_5Data([]);
+  setPM10Data([]);
+  setHumidexData([]);
     const fetchData = async () => {
       try {
-        const bucketUrl = buckets[selectedBucket];
-      const response = await axios.get(`${bucketUrl}?nocache=${new Date().getTime()}`);
-      console.log('Raw response data:', response.data);
+        const response = await axios.get(`${bucketUrl}?nocache=${new Date().getTime()}`);
+        console.log('Raw response data:', response.data);
 
         const data = response.data;
+
+        if (data.ID !== deviceIDs[selectedDevice]) {
+          return; // Skip if data is not for the selected device
+        }
+
         const [day, month, year, hours, minutes, seconds] = data.timestamp.split(/[- :]/);
         const timestamp = new Date(`${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`).getTime();
 
@@ -162,7 +175,7 @@ function App() {
     fetchData(); // Initial fetch
     const interval = setInterval(fetchData, 2000); // Fetch every 2 seconds
     return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, [selectedBucket, checkThresholds]);
+  }, [selectedDevice, checkThresholds]);
 
   useEffect(() => {
     localStorage.setItem('currentMenu', currentMenu);
@@ -217,7 +230,7 @@ function App() {
               PM10Avg={calculateAverage(PM10Data)}
             />
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
-              <div style={{ marginRight: 20 }}>
+              {/* <div style={{ marginRight: 20 }}>
                 <label style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#A9A9A9' }}>startDate:</label>
                 <input
                   type="datetime-local"
@@ -232,8 +245,8 @@ function App() {
                     outline: 'none',
                   }}
                 />
-              </div>
-              <div>
+              </div> */}
+              {/* <div>
                 <label style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#A9A9A9' }}>endDate:</label>
                 <input
                   type="datetime-local"
@@ -248,12 +261,12 @@ function App() {
                     outline: 'none',
                   }}
                 />
-              </div>
+              </div> */}
               <div>
-                <label style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#A9A9A9' }}>Sélectionnez le boitié</label>
+                <label style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#A9A9A9' }}>Sélectionnez le dispositif</label>
                 <select
-                  value={selectedBucket}
-                  onChange={(e) => setSelectedBucket(e.target.value)}
+                  value={selectedDevice}
+                  onChange={(e) => setSelectedDevice(e.target.value)}
                   style={{
                     padding: '8px 12px',
                     backgroundColor: '#2E2F45',
@@ -264,15 +277,15 @@ function App() {
                     outline: 'none',
                   }}
                 >
-                  <option value="device1">outdoor 1</option>
-                  <option value="device2">indoor 1</option>
+                  <option value="outdoor1">Outdoor 1</option>
+                  <option value="indoor1">Indoor 1</option>
                 </select>
               </div>
             </div>
             <ChartSection
               temperatureData={filteredTemperatureData}
               humidityData={filteredHumidityData}
-              humidexData={humidexData}    //Pensons à l'enlever et le mettre dans un graphiqe à part
+              humidexData={humidexData}
               CO2Data={filteredCO2Data}
               TVOCData={filteredTVOCData}
               soundData={filteredSoundData}
@@ -305,4 +318,3 @@ function App() {
 }
 
 export default App;
-
