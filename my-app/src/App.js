@@ -304,7 +304,7 @@ function App() {
               PM1_0Data={PM1_0Data}
               PM2_5Data={PM2_5Data}
               PM10Data={PM10Data}
-            />;
+            />
           </>
         )}
         {currentMenu === 'download' && <DownloadData data={data} />}
