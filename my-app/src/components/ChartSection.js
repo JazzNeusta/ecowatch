@@ -137,7 +137,7 @@ const ChartSection = ({
               visibleSeries.humidity && { name: 'Humidity', data: filterDataPerMinute(humidityData), color: '#00FF00' },
               visibleSeries.CO2 && { name: 'CO2', data: filterDataPerMinute(CO2Data), color: '#0000FF' },
               visibleSeries.TVOC && { name: 'TVOC', data: filterDataPerMinute(TVOCData), color: '#FFFF00' },
-              visibleSeries.sound && { name: 'Sound', data: filterDataPerMinute(soundData), color: '#f033ff' },
+              visibleSeries.sound && { name: 'Sound', data: filterDataPerMinute(soundData), color: '#00000F' },
               visibleSeries.PM1_0 && { name: 'PM1.0', data: filterDataPerMinute(PM1_0Data), color: '#8E44AD' },
               visibleSeries.PM2_5 && { name: 'PM2.5', data: filterDataPerMinute(PM2_5Data), color: '#16A085' },
               visibleSeries.PM10 && { name: 'PM10', data: filterDataPerMinute(PM10Data), color: '#F39C12' },
@@ -155,7 +155,7 @@ const ChartSection = ({
       <Grid item xs={2}>
         <FormGroup
           style={{
-            padding: '20px',
+            padding: '30px',
             backgroundColor: '#2E2F45',
             borderRadius: '8px',
           }}

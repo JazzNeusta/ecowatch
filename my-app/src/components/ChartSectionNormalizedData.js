@@ -110,7 +110,7 @@ const normalizedChartOptions = (visibleSeries, normalizedData) => {
           humidity: '#00FF00',
           CO2: '#0000FF',
           TVOC: '#FFFF00',
-          sound: '#FF33FF',
+          sound: '#00000F',
           PM1_0: '#8E44AD',
           PM2_5: '#16A085',
           PM10: '#F39C12',
@@ -169,15 +169,24 @@ const NormalizedChart = ({
       </Grid>
 
       {/* Checkboxes pour afficher/masquer les séries */}
-      <Grid item xs={2}>
+      {/* <Grid item xs={2}>
         <FormGroup
           style={{
-            marginLeft: '50px',
-            padding: '20px',
+            marginLeft: '20px',
+            padding: '30px',
             backgroundColor: '#2E2F45',
             borderRadius: '8px',
           }}
-        >
+        > */}
+        {/* Checkboxes pour le graphique combiné à droite du graphique */}
+        <Grid item xs={2}>
+          <FormGroup
+            style={{
+              padding: '30px',
+              backgroundColor: '#2E2F45',
+              borderRadius: '8px',
+            }}
+          >
           {Object.keys(visibleSeries).map((key) => (
             <FormControlLabel
               key={key}
