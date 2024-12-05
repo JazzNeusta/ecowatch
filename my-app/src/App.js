@@ -29,8 +29,8 @@ function App() {
   const [selectedDevice, setSelectedDevice] = useState('outdoor1');
 
   const deviceIDs = {
-    outdoor1: '20240313101500',
-    indoor1: '20240920083000',
+    indoor1: '20240313101500',
+    outdoor1: '20240920083000',
   };
 
   const bucketUrl = 'https://cacses3bucket0301.s3.eu-west-3.amazonaws.com/mycacsekey';
