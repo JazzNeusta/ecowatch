@@ -31,6 +31,7 @@ function App() {
   const deviceIDs = {
     indoor1: '20240313101500',
     outdoor1: '20240920083000',
+    indoor2: '20241205151930',
   };
 
   const bucketUrl = 'https://cacses3bucket0301.s3.eu-west-3.amazonaws.com/mycacsekey';
@@ -279,6 +280,7 @@ function App() {
                 >
                   <option value="outdoor1">Outdoor 1</option>
                   <option value="indoor1">Indoor 1</option>
+                  <option value="indoor2">Indoor 2</option>
                 </select>
               </div>
             </div>
